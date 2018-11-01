@@ -1,0 +1,274 @@
+{
+    "id": "1938664845696778275",
+    "stage_id": "1938664844253937664",
+    "group_id": "1938664845629669409",
+    "round_id": "1938664845629669410",
+    "number": 1,
+    "type": "ffa",
+    "status": "pending",
+    "settings": {
+        "match_format": null
+    },
+    "scheduled_datetime": null,
+    "played_at": null,
+    "public_note": null,
+    "private_note": null,
+    "opponents": [
+        {
+            "number": 1,
+            "position": 1,
+            "participant": {
+                "id": "1938332456862351450",
+                "name": "GameWard",
+                "custom_fields": {
+                    "team_id": "5"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 2,
+            "position": 2,
+            "participant": {
+                "id": "1938332456862351444",
+                "name": "PENTA Sports",
+                "custom_fields": {
+                    "team_id": "9"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 3,
+            "position": 3,
+            "participant": {
+                "id": "1938332456862351438",
+                "name": "MOONWOLF",
+                "custom_fields": {
+                    "team_id": "7"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 4,
+            "position": 4,
+            "participant": {
+                "id": "1938332456862351432",
+                "name": "400IQ",
+                "custom_fields": {
+                    "team_id": "16"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 5,
+            "position": 5,
+            "participant": {
+                "id": "1938332456862351426",
+                "name": "Ninjas in Pyjamas",
+                "custom_fields": {
+                    "team_id": "8"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 6,
+            "position": 6,
+            "participant": {
+                "id": "1938332456862351420",
+                "name": "Team Vitality",
+                "custom_fields": {
+                    "team_id": "13"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 7,
+            "position": 7,
+            "participant": {
+                "id": "1938332456862351414",
+                "name": "PlayerzOrigin",
+                "custom_fields": {
+                    "team_id": "14"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 8,
+            "position": 8,
+            "participant": {
+                "id": "1938332456862351408",
+                "name": "beGenius-ESC",
+                "custom_fields": {
+                    "team_id": "18"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 9,
+            "position": 9,
+            "participant": {
+                "id": "1938332456862351402",
+                "name": "HAVU Gaming",
+                "custom_fields": {
+                    "team_id": "6"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 10,
+            "position": 10,
+            "participant": {
+                "id": "1938332456862351396",
+                "name": "Copenhagen Flames",
+                "custom_fields": {
+                    "team_id": "3"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 11,
+            "position": 11,
+            "participant": {
+                "id": "1938332456862351390",
+                "name": "dizLown",
+                "custom_fields": {
+                    "team_id": "4"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 12,
+            "position": 12,
+            "participant": {
+                "id": "1938332456862351384",
+                "name": "Team 3DMAX",
+                "custom_fields": {
+                    "team_id": "15"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 13,
+            "position": 13,
+            "participant": {
+                "id": "1938332456862351378",
+                "name": "Tollenz Lions",
+                "custom_fields": {
+                    "team_id": "12"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 14,
+            "position": 14,
+            "participant": {
+                "id": "1938332456862351372",
+                "name": "Supremacy",
+                "custom_fields": {
+                    "team_id": "11"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 15,
+            "position": 15,
+            "participant": {
+                "id": "1938332456862351366",
+                "name": "ALTERNATE aTTaX",
+                "custom_fields": {
+                    "team_id": "17"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        },
+        {
+            "number": 16,
+            "position": 16,
+            "participant": {
+                "id": "1938332456828796928",
+                "name": "Team Reciprocity",
+                "custom_fields": {
+                    "team_id": "10"
+                }
+            },
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": []
+        }
+    ]
+}

@@ -1,0 +1,227 @@
+{
+    "data": {
+        "type": "tournament",
+        "id": "eu-eswc18",
+        "relationships": {
+            "matches": {
+                "data": [
+                    {
+                        "type": "match",
+                        "id": "717b95df-8c0a-46de-b20b-5d15caeb4f74"
+                    },
+                    {
+                        "type": "match",
+                        "id": "18f67b07-2384-495c-b6d3-bca9b36ed9eb"
+                    },
+                    {
+                        "type": "match",
+                        "id": "c421ae82-cd03-40d5-a55b-af2bac1a486c"
+                    },
+                    {
+                        "type": "match",
+                        "id": "9d2da8bd-584b-4ef7-9715-773a45b3bc12"
+                    },
+                    {
+                        "type": "match",
+                        "id": "a6482668-8fc1-471e-9a0c-30db514412d2"
+                    },
+                    {
+                        "type": "match",
+                        "id": "28c6015b-ccad-4863-8b89-045148033d9d"
+                    },
+                    {
+                        "type": "match",
+                        "id": "668b8abe-a1d2-4f93-bc1a-9c6b7a528ae5"
+                    },
+                    {
+                        "type": "match",
+                        "id": "95ad57c8-fa58-47ce-a40e-a1eabbbb4ce5"
+                    },
+                    {
+                        "type": "match",
+                        "id": "4c05a6b8-5023-46b9-bbd0-38108c2e04d0"
+                    },
+                    {
+                        "type": "match",
+                        "id": "cb059290-69a1-4cd1-8d69-bd0aa7e66591"
+                    },
+                    {
+                        "type": "match",
+                        "id": "926a2f9b-c8d0-43e2-bab6-598c70159e1f"
+                    },
+                    {
+                        "type": "match",
+                        "id": "c4a4f34d-90ce-40e3-9d9b-28fb86119e5c"
+                    },
+                    {
+                        "type": "match",
+                        "id": "11dc9af2-36c9-4920-80ed-d8c8d19a89ea"
+                    },
+                    {
+                        "type": "match",
+                        "id": "994538d0-5802-4dc1-9591-e9a9b47e6346"
+                    },
+                    {
+                        "type": "match",
+                        "id": "100861d9-e002-4d29-88ae-ade29f6b89fc"
+                    },
+                    {
+                        "type": "match",
+                        "id": "b22ceb92-285b-4d0a-8cad-a280556a6481"
+                    },
+                    {
+                        "type": "match",
+                        "id": "28035fbb-60e2-4acc-9d6f-f60b10cfc189"
+                    },
+                    {
+                        "type": "match",
+                        "id": "59381e7c-fe29-4ae1-858a-104eb05bec49"
+                    },
+                    {
+                        "type": "match",
+                        "id": "b117a4d6-58c4-4ddb-84dd-a33823f7bb90"
+                    }
+                ]
+            }
+        }
+    },
+    "included": [
+        {
+            "type": "match",
+            "id": "717b95df-8c0a-46de-b20b-5d15caeb4f74",
+            "attributes": {
+                "createdAt": "2018-10-30T15:35:54Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "9d2da8bd-584b-4ef7-9715-773a45b3bc12",
+            "attributes": {
+                "createdAt": "2018-10-30T12:53:54Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "95ad57c8-fa58-47ce-a40e-a1eabbbb4ce5",
+            "attributes": {
+                "createdAt": "2018-10-29T15:57:54Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "4c05a6b8-5023-46b9-bbd0-38108c2e04d0",
+            "attributes": {
+                "createdAt": "2018-10-29T15:06:49Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "994538d0-5802-4dc1-9591-e9a9b47e6346",
+            "attributes": {
+                "createdAt": "2018-10-29T10:15:03Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "28035fbb-60e2-4acc-9d6f-f60b10cfc189",
+            "attributes": {
+                "createdAt": "2018-10-28T15:22:17Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "c421ae82-cd03-40d5-a55b-af2bac1a486c",
+            "attributes": {
+                "createdAt": "2018-10-30T13:55:58Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "28c6015b-ccad-4863-8b89-045148033d9d",
+            "attributes": {
+                "createdAt": "2018-10-30T10:11:03Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "11dc9af2-36c9-4920-80ed-d8c8d19a89ea",
+            "attributes": {
+                "createdAt": "2018-10-29T12:49:31Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "100861d9-e002-4d29-88ae-ade29f6b89fc",
+            "attributes": {
+                "createdAt": "2018-10-29T09:26:47Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "b22ceb92-285b-4d0a-8cad-a280556a6481",
+            "attributes": {
+                "createdAt": "2018-10-28T16:11:11Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "18f67b07-2384-495c-b6d3-bca9b36ed9eb",
+            "attributes": {
+                "createdAt": "2018-10-30T14:45:46Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "a6482668-8fc1-471e-9a0c-30db514412d2",
+            "attributes": {
+                "createdAt": "2018-10-30T12:43:10Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "926a2f9b-c8d0-43e2-bab6-598c70159e1f",
+            "attributes": {
+                "createdAt": "2018-10-29T14:12:14Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "b117a4d6-58c4-4ddb-84dd-a33823f7bb90",
+            "attributes": {
+                "createdAt": "2018-10-28T10:01:06Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "668b8abe-a1d2-4f93-bc1a-9c6b7a528ae5",
+            "attributes": {
+                "createdAt": "2018-10-30T09:19:49Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "cb059290-69a1-4cd1-8d69-bd0aa7e66591",
+            "attributes": {
+                "createdAt": "2018-10-29T14:59:23Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "c4a4f34d-90ce-40e3-9d9b-28fb86119e5c",
+            "attributes": {
+                "createdAt": "2018-10-29T13:10:48Z"
+            }
+        },
+        {
+            "type": "match",
+            "id": "59381e7c-fe29-4ae1-858a-104eb05bec49",
+            "attributes": {
+                "createdAt": "2018-10-28T14:38:03Z"
+            }
+        }
+    ],
+    "links": {
+        "self": "https://api.pubg.com/tournaments/eu-eswc18"
+    },
+    "meta": {}
+}

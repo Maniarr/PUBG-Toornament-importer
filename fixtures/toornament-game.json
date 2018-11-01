@@ -1,0 +1,201 @@
+{
+    "number": 1,
+    "status": "pending",
+    "opponents": [
+        {
+            "number": 1,
+            "position": 1,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 2,
+            "position": 2,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 3,
+            "position": 3,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 4,
+            "position": 4,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 5,
+            "position": 5,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 6,
+            "position": 6,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 7,
+            "position": 7,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 8,
+            "position": 8,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 9,
+            "position": 9,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 10,
+            "position": 10,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 11,
+            "position": 11,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 12,
+            "position": 12,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 13,
+            "position": 13,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 14,
+            "position": 14,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 15,
+            "position": 15,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        },
+        {
+            "number": 16,
+            "position": 16,
+            "rank": null,
+            "result": null,
+            "forfeit": false,
+            "score": null,
+            "properties": {
+                "ingame_rank": null,
+                "kills": null
+            }
+        }
+    ],
+    "properties": {
+        "map": null
+    }
+}
