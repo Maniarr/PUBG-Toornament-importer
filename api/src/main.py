@@ -4,10 +4,13 @@ import json
 
 import toornament
 import pubg
+import importer
 
 from flask import Flask, session, request, redirect
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 SESSION_TYPE = "filesystem"
 SESSION_FILE_DIR = "./session"
 app.secret_key = os.getenv("SECRET_KEY")
@@ -137,6 +140,47 @@ def pubg_tournament(tournament_id):
         }, 401)
 
     return create_json_response(pubg_api.get_tournament(tournament_id), 200)
+
+@app.route("/import", methods=["POST"])
+def import_statistics():
+    if "Authorization" not in request.headers:
+        return create_json_response({
+            "error": "No \"Authorization\" header provided"
+        }, 401)
+
+    api_user = toornament.ApiUser(toornament_api)
+    api_user.access_token = request.headers["Authorization"]
+
+    print({
+        "toornament_tournament_id": request.json["toornament_tournament_id"],
+        "toornament_match_id": request.json["toornament_match_id"],
+        "toornament_game": request.json["toornament_game"], 
+        "pubg_match_id": request.json["pubg_match_id"]})
+
+    pubg_match = pubg_api.get_match("pc-tournament", request.json["pubg_match_id"])
+
+    teams = importer.get_teams(pubg_match)
+
+    print(len(teams))
+ 
+    print("Retrieve match from Toornament api")
+
+    toornament_match = api_user.get_match(
+        request.json["toornament_tournament_id"],
+        request.json["toornament_match_id"]
+    )
+
+    game = importer.transform_teams_to_games(teams, toornament_match)
+
+    print("Update game result on Toornament")
+    api_user.patch_toornament_game(
+        request.json["toornament_tournament_id"],
+        request.json["toornament_match_id"],
+        request.json["toornament_game"],
+        game
+    )
+
+    return create_json_response({}, 200)
 
 if __name__ == "__main__":
     app.debug = True

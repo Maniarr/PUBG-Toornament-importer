@@ -46,12 +46,21 @@ def transform_teams_to_games(teams, toornament_match):
     conversion = get_opponents_conversion(toornament_match)
 
     for team in teams:
-        game["opponents"].append({
-            "number": conversion[str(team.team_id)],
-            "properties": {
-                "ingame_rank": team.rank,
-                "kills": team.kills
-            }
-        })
+        if str(team.team_id) in conversion:
+            game["opponents"].append({
+                "number": conversion[str(team.team_id)],
+                "properties": {
+                    "ingame_rank": team.rank,
+                    "kills": team.kills
+                }
+            })
+
+            print({
+                "number": conversion[str(team.team_id)],
+                "properties": {
+                    "ingame_rank": team.rank,
+                    "kills": team.kills
+                }
+            })
 
     return game
