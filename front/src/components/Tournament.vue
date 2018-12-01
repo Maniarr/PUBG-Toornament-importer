@@ -39,11 +39,19 @@
                 >
                 </ToornamentChooser>
                 <PUBGChooser
-                    v-if="is_toornament_ready()"
+                    v-if="is_toornament_ready() && !is_preview_ready()"
                     :accesstoken="accesstoken"
                     v-on:update_pubg="update_pubg"
                 >
                 </PUBGChooser>
+                <ChooserPreview
+                    v-if="is_preview_ready()"
+                    :accesstoken="accesstoken"
+                    :toornament="toornament"
+                    :pubg="pubg"
+                    v-on:cancel_preview="cancel"
+                >
+                </ChooserPreview>
             </div>
         </div>
     </div>
@@ -53,12 +61,14 @@
     import Config from '../config'
     import ToornamentChooser from './ToornamentChooser.vue'
     import PUBGChooser from './PUBGChooser.vue'
+    import ChooserPreview from './ChooserPreview.vue'
 
     export default {
         name: 'Tournament',
         components: {
             ToornamentChooser,
-            PUBGChooser
+            PUBGChooser,
+            ChooserPreview
         },
         props: {
             accesstoken: String
@@ -84,9 +94,19 @@
                     return false
 
                 return this.$data.toornament.game != null
+            },
+            is_preview_ready: function () {
+                if (this.$data.pubg == null)
+                    return false
+
+                return this.is_toornament_ready() && this.$data.pubg.match != null
+            },
+            cancel: function () {
+                Object.assign(this.$data, this.$options.data.call(this));
             }
         },
         mounted: function () {
+
         }
     }
 </script>

@@ -28,7 +28,6 @@ class ApiUser:
         })
 
         print(r)
-        print(r.text)
 
         return r.json()
     
@@ -40,7 +39,6 @@ class ApiUser:
         })
 
         print(r)
-        print(r.text)
 
         return r.json()
 
@@ -52,7 +50,6 @@ class ApiUser:
         })
 
         print(r)
-        print(r.text)
 
         return r.json()
 

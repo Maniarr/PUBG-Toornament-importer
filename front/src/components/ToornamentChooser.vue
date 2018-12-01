@@ -94,6 +94,7 @@
             udpate_toornament: function() {
                 this.$emit('update_toornament', {
                     tournament: this.$data.tournament,
+                    match: this.$data.match,
                     game: this.$data.game
                 })
             }

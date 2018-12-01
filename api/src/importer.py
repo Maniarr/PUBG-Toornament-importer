@@ -33,7 +33,10 @@ def get_opponents_conversion(toornament_match):
     conversion = {}
 
     for opponents in toornament_match["opponents"]:
-        conversion[opponents["participant"]["custom_fields"]["team_id"]] = opponents["number"]
+        conversion[opponents["participant"]["custom_fields"]["team_id"]] = { 
+            "number": opponents["number"],
+            "name": opponents["participant"]["name"]
+        }
 
     return conversion
 
@@ -48,7 +51,7 @@ def transform_teams_to_games(teams, toornament_match):
     for team in teams:
         if str(team.team_id) in conversion:
             game["opponents"].append({
-                "number": conversion[str(team.team_id)],
+                "number": conversion[str(team.team_id)]["number"],
                 "properties": {
                     "ingame_rank": team.rank,
                     "kills": team.kills
@@ -56,7 +59,34 @@ def transform_teams_to_games(teams, toornament_match):
             })
 
             print({
-                "number": conversion[str(team.team_id)],
+                "number": conversion[str(team.team_id)]["number"],
+                "properties": {
+                    "ingame_rank": team.rank,
+                    "kills": team.kills
+                }
+            })
+
+    return game
+
+def preview_teams(teams, toornament_match):
+    game = {
+        "teams": []
+    }
+
+    conversion = get_opponents_conversion(toornament_match)
+
+    for team in teams:
+        if str(team.team_id) in conversion:
+            game["teams"].append({
+                "team": conversion[str(team.team_id)],
+                "properties": {
+                    "ingame_rank": team.rank,
+                    "kills": team.kills
+                }
+            })
+
+            print({
+                "team": conversion[str(team.team_id)],
                 "properties": {
                     "ingame_rank": team.rank,
                     "kills": team.kills

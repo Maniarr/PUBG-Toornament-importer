@@ -32,7 +32,8 @@
                 <div class="row pt-3 pb-3">
                     <div v-for="match in matches" v-bind:key="match.id" @click="setPUBGMatch(match)" class="card mb-2" style="cursor: pointer; width: 100%">
                         <div class="card-body">
-                            <h5 class="card-title">Played at {{ match.attributes.createdAt }} - {{ match.id }}</h5>
+                            <h5 class="card-title">#{{ match.index}} - Created at {{ match.attributes.createdAt }}</h5>
+                            <span>{{ match.id }}</span>
                         </div>
                     </div>
                 </div>
@@ -74,12 +75,14 @@
                     }
                 }).then(response => {
                     this.$data.matches = response.body.included.sort((a, b) => {
-                        return a.attributes.createdAt < b.attributes.createdAt ? 1 : -1
+                        return a.attributes.createdAt > b.attributes.createdAt ? 1 : -1
                     })
 
                     this.$data.matches.forEach((element, index) => {
                         element.index = index + 1
                     });
+
+                    this.$data.matches.reverse()
                 })
             },
             setPUBGTournament: function (tournament) {

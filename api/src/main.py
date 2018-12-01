@@ -182,6 +182,41 @@ def import_statistics():
 
     return create_json_response({}, 200)
 
+@app.route("/preview", methods=["GET"])
+def preview():
+    if "Authorization" not in request.headers:
+        return create_json_response({
+            "error": "No \"Authorization\" header provided"
+        }, 401)
+
+    api_user = toornament.ApiUser(toornament_api)
+    api_user.access_token = request.headers["Authorization"]
+
+    print({
+        "toornament_tournament_id": request.args["toornament_tournament_id"],
+        "toornament_match_id": request.args["toornament_match_id"],
+        "pubg_match_id": request.args["pubg_match_id"]})
+
+    pubg_match = pubg_api.get_match("pc-tournament", request.args["pubg_match_id"])
+
+    teams = importer.get_teams(pubg_match)
+
+    print(len(teams))
+ 
+    print("Retrieve match from Toornament api")
+
+    toornament_match = api_user.get_match(
+        request.args["toornament_tournament_id"],
+        request.args["toornament_match_id"]
+    )
+
+    print(toornament_match)
+
+    game = importer.preview_teams(teams, toornament_match)
+
+    return create_json_response(game, 200)
+
+
 if __name__ == "__main__":
     app.debug = True
     app.run(host="127.0.0.1")
