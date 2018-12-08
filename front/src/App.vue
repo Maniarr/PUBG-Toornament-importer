@@ -1,21 +1,19 @@
 <template>
-  <div id="app">
-    <div v-if="!is_connected">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-          <a class="navbar-brand" href="#">PUBG importer</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-          </button>
-      </nav>
+  <div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
+      <a class="navbar-brand" href="#">PUBG importer</a>
+      <button v-if="is_connected" class="btn btn-danger" @click="logout">Logout</button>
+    </nav>
 
+    <div v-if="!is_connected">
       <table style="height: 80vh; width: 100%" class="text-center">
-          <tbody>
-              <tr>
-                  <td class="align-middle" v-if="link != null">
-                      <a class="btn btn-primary" v-bind:href="link">Login with Toornament</a>
-                  </td>
-              </tr>
-          </tbody>
+        <tbody>
+          <tr>
+            <td class="align-middle" v-if="link != null">
+              <a class="btn btn-primary" v-bind:href="link">Login with Toornament</a>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
     <Tournament v-else/>
@@ -35,6 +33,11 @@
       return {
         link: null,
         is_connected: false
+      }
+    },
+    methods: {
+      logout() {
+        window.location = '/'
       }
     },
     mounted() {

@@ -71,6 +71,118 @@ class Api {
             })
         })
     }
+
+    pubg_get_tournaments() {
+        return new Promise((resolve, reject) => {
+            this.http.get('pubg/tournaments', {
+                headers: {
+                    'Authorization': 'Bearer ' + this.token
+                }
+            }).then(response => {
+                resolve(response.body.data)
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    }
+
+    pubg_get_tournament_matches(tournament_id) {
+        return new Promise((resolve, reject) => {
+            this.http.get('pubg/tournaments/' + tournament_id, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.token
+                }
+            }).then(response => {
+                resolve(response.body.included)
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    }
+
+    pubg_get_players(platform, username) {
+        return new Promise((resolve, reject) => {
+            this.http.get('pubg/players', {
+                headers: {
+                    'Authorization': 'Bearer ' + this.token
+                },
+                params: {
+                    platform: platform,
+                    username: username
+                }
+            }).then(response => {
+                if (response.body.errors != null)
+                    reject(response.body.errors)
+                else
+                    resolve(response.body.data)
+            }).catch(error => {
+                reject(error)
+            })
+        })        
+    }
+
+    pubg_get_match(platform, match_id) {
+        return new Promise((resolve, reject) => {
+            this.http.get('pubg/matches/' + platform + '/' + match_id, {
+                headers: {
+                    'Authorization': 'Bearer ' + this.token
+                }
+            }).then(response => {
+                let match_info = response.data.data
+            
+                resolve({
+                    id: match_info.id,
+                    platform: platform,
+                    played_at: match_info.attributes.createdAt,
+                    map_name: match_info.attributes.mapName,
+                    game_mode: match_info.attributes.gameMode,
+                    nb_teams: match_info.relationships.rosters.data.length
+                })
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    }
+
+    get_preview(toornament_tournament_id, toornament_match_id, pubg_platform, pubg_match_id) {
+        return new Promise((resolve, reject) => {
+            this.http.get('preview', {
+                headers: {
+                    'Authorization': 'Bearer ' + this.token
+                },
+                params: {
+                    toornament_tournament_id: toornament_tournament_id,
+                    toornament_match_id: toornament_match_id,
+                    pubg_platform: pubg_platform,
+                    pubg_match_id: pubg_match_id
+                }
+            }).then(response => {
+                resolve(response.body.teams)
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    }
+
+    import_preview(toornament_tournament_id, toornament_match_id, toornament_game, pubg_platform, pubg_match_id) {
+        return new Promise((resolve, reject) => {
+            this.http.post('import', {
+                toornament_tournament_id: toornament_tournament_id,
+                toornament_match_id: toornament_match_id,
+                toornament_game: toornament_game,
+                pubg_platform: pubg_platform,
+                pubg_match_id: pubg_match_id
+            }, {
+                headers: {
+                        'Authorization': 'Bearer ' + this.token
+                }
+            }).then(response => {
+               resolve(response)
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    }
 }
 
 export default {

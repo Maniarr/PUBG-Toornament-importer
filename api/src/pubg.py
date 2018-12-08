@@ -33,3 +33,15 @@ class Api:
         print(r)
 
         return r.json()
+
+    def search_players(self, region, username):
+        r = requests.get("https://api.pubg.com/shards/{}/players".format(region), headers={
+            "Authorization": "Bearer {}".format(self.api_key),
+            "Accept": "application/vnd.api+json"
+        }, params={
+            "filter[playerNames]": username
+        })
+
+        print(r)
+
+        return r.json()

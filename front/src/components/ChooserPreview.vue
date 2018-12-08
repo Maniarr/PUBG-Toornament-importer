@@ -40,7 +40,6 @@
     export default {
         name: 'ChooserPreview',
         props: {
-            accesstoken: String,
             toornament: Object,
             pubg: Object
         },
@@ -51,37 +50,25 @@
         },
         methods: {
             get_preview: function () {
-                this.$http.get(Config.API_URL + '/preview', {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.accesstoken
-                    },
-                    params: {
-                        toornament_tournament_id: this.$props.toornament.tournament.id,
-                        toornament_match_id: this.$props.toornament.match.id,
-                        pubg_match_id: this.$props.pubg.match.id
-                    }
-                }).then(response => {
-                    this.$data.teams = response.body.teams
+                this.$api.get_preview(this.$props.toornament.tournament.id,
+                    this.$props.toornament.match.id,
+                    this.$props.pubg.match.platform,
+                    this.$props.pubg.match.id).then((teams) =>  {
+                        this.teams = teams
 
-                    this.$data.teams.sort((a, b) => {
-                        return a.properties.ingame_rank > b.properties.ingame_rank
+                        this.$data.teams.sort((a, b) => {
+                            return a.properties.ingame_rank > b.properties.ingame_rank
+                        })
                     })
-                })
             },
             confirm_preview: function () {
-                this.$http.post(Config.API_URL + '/import', {
-                        toornament_tournament_id: this.$props.toornament.tournament.id,
-                        toornament_match_id: this.$props.toornament.match.id,
-                        toornament_game: this.$props.toornament.game,
-                        pubg_match_id: this.$props.pubg.match.id,
-                    }, {
-                        headers: {
-                            'Authorization': 'Bearer ' + this.accesstoken
-                        }
-                    }
-                ).then(() => {
-                    this.$emit('cancel_preview')
-                })
+                this.$api.import_preview(this.$props.toornament.tournament.id,
+                    this.$props.toornament.match.id,
+                    this.$props.toornament.game,
+                    this.$props.pubg.match.platform,
+                    this.$props.pubg.match.id).then(() => {
+                        this.$emit('cancel_preview')
+                   })
             }
         },
         mounted: function () {

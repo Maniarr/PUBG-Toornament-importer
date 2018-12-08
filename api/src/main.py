@@ -141,6 +141,24 @@ def pubg_tournament(tournament_id):
 
     return create_json_response(pubg_api.get_tournament(tournament_id), 200)
 
+@app.route("/pubg/matches/<region>/<match_id>", methods=["GET"])
+def pubg_matches(region, match_id):
+    if "Authorization" not in request.headers:
+        return create_json_response({
+            "error": "No \"Authorization\" header provided"
+        }, 401)
+
+    return create_json_response(pubg_api.get_match(region, match_id), 200)
+
+@app.route("/pubg/players", methods=["GET"])
+def pubg_players():
+    if "Authorization" not in request.headers:
+        return create_json_response({
+            "error": "No \"Authorization\" header provided"
+        }, 401)
+
+    return create_json_response(pubg_api.search_players(request.args["platform"], request.args["username"]), 200)
+
 @app.route("/import", methods=["POST"])
 def import_statistics():
     if "Authorization" not in request.headers:
@@ -171,6 +189,7 @@ def import_statistics():
     )
 
     game = importer.transform_teams_to_games(teams, toornament_match)
+    game['number'] = request.json["toornament_game"]
 
     print("Update game result on Toornament")
     api_user.patch_toornament_game(
@@ -197,7 +216,7 @@ def preview():
         "toornament_match_id": request.args["toornament_match_id"],
         "pubg_match_id": request.args["pubg_match_id"]})
 
-    pubg_match = pubg_api.get_match("pc-tournament", request.args["pubg_match_id"])
+    pubg_match = pubg_api.get_match(request.args["pubg_platform"], request.args["pubg_match_id"])
 
     teams = importer.get_teams(pubg_match)
 
