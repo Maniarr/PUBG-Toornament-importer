@@ -1,5 +1,4 @@
 use super::super::{
-    model::{user},
     util::{jwt::*, response::*},
     service::toornament::{self, *},
 };
@@ -33,12 +32,34 @@ fn get_login() -> JsonResponse<LoginLocation, CustomError> {
     })
 }
 
+#[derive(Serialize)]
+struct Token {
+    authentication_token: String,
+    access_token: String,
+    expires_in: i32,
+    token_type: String,
+    refresh_token: String,
+    scope: String
+}
+
 #[post("/login", data="<login_request>")]
-fn login(login_request: Json<LoginRequest>) -> JsonResponse<TokenResponse, toornament::Error> {
+fn login(login_request: Json<LoginRequest>) -> JsonResponse<Token, toornament::Error> {
     let client = reqwest::Client::new();
 
     match get_tokens(&client, &login_request.into_inner()) {
-        Ok(token) => JsonResponse::Ok(Status::Ok.code, token),
+        Ok(token) => {
+            match generate_jwt(token.access_token.clone()) {
+                Ok(jwt) => JsonResponse::Ok(Status::Ok.code, Token {
+                    authentication_token: jwt,
+                    access_token: token.access_token,
+                    expires_in: token.expires_in,
+                    token_type: token.token_type,
+                    refresh_token: token.refresh_token,
+                    scope: token.scope
+                }),
+                Err(error) => JsonResponse::Err(Status::Unauthorized.code, error)
+            }
+        },
         Err(error) => JsonResponse::Err(Status::Unauthorized.code, error)
     }
 }
@@ -52,6 +73,7 @@ pub fn register_routes() -> Vec<Route> {
     routes![
         options_login,
         get_login,
-        login
+        login,
+        me
     ]
 }

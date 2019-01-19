@@ -1,4 +1,4 @@
-use super::super::model::user;
+use super::super::service::toornament;
 
 use jsonwebtoken::{encode, decode, Header, Validation};
 use rocket::{
@@ -22,68 +22,11 @@ lazy_static!{
     pub static ref JWT_SECRET: Vec<u8> = std::env::var("JWT_SECRET").unwrap().into_bytes();
 }
 
-#[derive(Debug)]
-pub enum Role {
-    User
-}
-
-impl ToString for Role {
-    fn to_string(&self) -> String {
-        match self {
-            Role::User      => "user".to_string()
-        }
-    }
-}
-
-impl TryFrom<String> for Role {
-    type Error = fmt::Error;
-
-    fn try_from(name: String) -> Result<Self, Self::Error> {
-        match name.as_str() {
-            "user"  => Ok(Role::User),
-            _       => Err(fmt::Error {})
-        }
-    }
-}
-
-impl Serialize for Role {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
-        serializer.serialize_str(&self.to_string())
-    }
-}
-
-struct RoleVisitor;
-
-impl<'de> Visitor<'de> for RoleVisitor {
-    type Value = Role;
-
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "provided string isn't valid role")
-    }
-
-    fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
-        where
-            E: de::Error,
-    {
-        match Role::try_from(s.to_string()) {
-            Ok(role)    => Ok(role),
-            Err(_)      => Err(de::Error::invalid_value(Unexpected::Str(s), &self))
-        }
-    }
-}
-
-impl<'de> Deserialize<'de> for Role {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error> where D: Deserializer<'de> {
-        deserializer.deserialize_str(RoleVisitor {})
-    }
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
-    pub sub: i64,
-    pub iss : String,
-    pub exp: usize,
-    pub roles: Vec<Role>
+    pub sub: String,
+    pub iat : usize,
+    pub exp: usize
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for Claims {
@@ -91,27 +34,80 @@ impl<'a, 'r> FromRequest<'a, 'r> for Claims {
 
     fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
         let jwt: String = request.headers().get("x-api-key").collect();
+        let toornament_token: String = request.headers().get("x-toornament-api-key").collect();
 
-        match verify_jwt(jwt) {
+        match verify_jwt(jwt, toornament_token) {
             Ok(raw_jwt) => Outcome::Success(raw_jwt.claims),
             Err(_error) => Outcome::Failure((Status::Unauthorized, "".to_owned()))
         }
     }
 }
 
-pub fn generate_jwt(user: user::User) -> Result<String, jsonwebtoken::errors::Error> {
-    let my_claims = Claims {
-        sub: user.id.unwrap(),
-        iss: "ACME".to_owned(),
-        exp: (Utc::now() + Duration::hours(1)).timestamp() as usize,
-        roles: user.roles
-    };
-
-    encode(&Header::default(), &my_claims, &*JWT_SECRET)
+impl From<jsonwebtoken::errors::Error> for toornament::Error {
+    fn from(error: jsonwebtoken::errors::Error) -> Self {
+        toornament::Error {
+            error: "JWT".to_string(),
+            hint: "".to_string(),
+            message: error.to_string()
+        }
+    }
 }
 
-pub fn verify_jwt(token: String) -> Result<jsonwebtoken::TokenData<Claims>, jsonwebtoken::errors::Error> {
-    let validation = Validation { iss: Some("ACME".to_owned()), ..Validation::default() };
+impl From<base64::DecodeError> for toornament::Error {
+    fn from(error: base64::DecodeError) -> Self {
+        toornament::Error {
+            error: "JWT".to_string(),
+            hint: "".to_string(),
+            message: error.to_string()
+        }
+    }
+}
 
-    decode::<Claims>(&token, &*JWT_SECRET, &validation)
+impl From<std::option::NoneError> for toornament::Error {
+    fn from(error: std::option::NoneError) -> Self {
+        toornament::Error {
+            error: "JWT".to_string(),
+            hint: "".to_string(),
+            message: "invalid token".to_string()
+        }
+    }
+}
+
+impl From<serde_json::Error> for toornament::Error {
+    fn from(error: serde_json::Error) -> Self {
+        toornament::Error {
+            error: "JWT".to_string(),
+            hint: "".to_string(),
+            message: error.to_string()
+        }
+    }
+}
+
+pub fn generate_jwt(access_token: String) -> Result<String, toornament::Error> {
+    let informations = access_token.split(".").nth(1)?;
+
+    let mut claims: Claims = serde_json::from_slice(&base64::decode(informations)?)?;
+
+    claims.sub = access_token;
+
+    match encode(&Header::default(), &claims, &*JWT_SECRET) {
+        Ok(jwt) => Ok(jwt),
+        Err(error) => Err(toornament::Error::from(error))
+    }
+}
+
+pub fn verify_jwt(jwt: String, toornament_token: String) -> Result<jsonwebtoken::TokenData<Claims>, toornament::Error> {
+    let validation = Validation { ..Validation::default() };
+
+    let claims = decode::<Claims>(&jwt, &*JWT_SECRET, &validation)?;
+
+    if claims.claims.sub == toornament_token {
+        Ok(claims)
+    } else {
+        Err(toornament::Error {
+            error: "".to_string(),
+            hint: "".to_string(),
+            message: "".to_string()
+        })
+    }
 }

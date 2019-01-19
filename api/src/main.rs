@@ -1,5 +1,6 @@
 #![feature(proc_macro_hygiene, decl_macro, custom_attribute)]
 #![feature(try_from)] // Rust 1.33 stable will be released on Fri Mar 01 2019.
+#![feature(try_trait)]
 
 extern crate bcrypt;
 extern crate chrono;
@@ -12,10 +13,10 @@ extern crate serde_json;
 extern crate uuid;
 extern crate dotenv;
 extern crate reqwest;
+extern crate base64;
 
 mod controller;
 mod util;
-mod model;
 mod service;
 
 fn try_config() {
@@ -53,6 +54,5 @@ fn main() {
 
     rocket::ignite()
         .mount("/", controller::auth::register_routes())
-        .mount("/", controller::user::register_routes())
         .launch();
 }

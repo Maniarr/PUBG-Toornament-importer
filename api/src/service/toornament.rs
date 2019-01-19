@@ -26,9 +26,9 @@ pub struct TokenRequest {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Error {
-    error: String,
-    hint: String,
-    message: String
+    pub error: String,
+    pub hint: String,
+    pub message: String
 }
 
 impl From<LoginRequest> for TokenRequest {
@@ -55,11 +55,11 @@ impl From<reqwest::Error> for Error {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct TokenResponse {
-    access_token: String,
-    expires_in: i32,
-    token_type: String,
-    refresh_token: String,
-    scope: String
+    pub access_token: String,
+    pub expires_in: i32,
+    pub token_type: String,
+    pub refresh_token: String,
+    pub scope: String
 }
 
 #[derive(Deserialize, Serialize, Debug)]
