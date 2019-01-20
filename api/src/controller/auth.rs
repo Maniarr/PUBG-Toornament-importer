@@ -5,7 +5,7 @@ use super::super::{
 
 use bcrypt::verify;
 use rocket::{
-    http::{ContentType, Status},
+    http::{Cookie, Cookies, ContentType, Status},
     Route
 };
 use rocket_contrib::json::Json;
@@ -26,9 +26,13 @@ fn options_login() -> String {
 }
 
 #[get("/login")]
-fn get_login() -> JsonResponse<LoginLocation, CustomError> {
+fn get_login(mut cookies: Cookies) -> JsonResponse<LoginLocation, CustomError> {
+    let csrf_token = uuid::Uuid::new_v4();
+
+    cookies.add_private(Cookie::new("csrf_token", format!("{}", csrf_token)));
+
     JsonResponse::Ok(Status::Ok.code, LoginLocation {
-        connection_uri: toornament::get_connection_uri()
+        connection_uri: toornament::get_connection_uri(csrf_token)
     })
 }
 
@@ -42,11 +46,28 @@ struct Token {
     scope: String
 }
 
-#[post("/login", data="<login_request>")]
-fn login(login_request: Json<LoginRequest>) -> JsonResponse<Token, toornament::Error> {
+#[post("/login", data="<json_login_request>")]
+fn login(mut cookies: Cookies, json_login_request: Json<LoginRequest>) -> JsonResponse<Token, toornament::Error> {
     let client = reqwest::Client::new();
+    let login_request = json_login_request.into_inner();
 
-    match get_tokens(&client, &login_request.into_inner()) {
+    if let Some(cookie) = cookies.get_private("csrf_token") {
+        if cookie.value() != login_request.state {
+            return JsonResponse::Err(Status::Unauthorized.code, toornament::Error {
+                error: "".to_string(),
+                hint: "".to_string(),
+                message: "".to_string()
+            });
+        }
+    } else {
+        return JsonResponse::Err(Status::Unauthorized.code, toornament::Error {
+            error: "".to_string(),
+            hint: "".to_string(),
+            message: "".to_string()
+        });
+    }
+
+    match get_tokens(&client, &login_request) {
         Ok(token) => {
             match generate_jwt(token.access_token.clone()) {
                 Ok(jwt) => JsonResponse::Ok(Status::Ok.code, Token {

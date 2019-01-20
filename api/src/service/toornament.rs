@@ -11,8 +11,8 @@ lazy_static!{
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct LoginRequest {
-    code: String,
-    state: String
+    pub code: String,
+    pub state: String
 }
 
 #[derive(Serialize, Debug)]
@@ -76,14 +76,14 @@ fn to_result<T>(result: ToornamentResult<T>) -> Result<T, Error> {
     }
 }
 
-pub fn get_connection_uri() -> String {
+pub fn get_connection_uri(csrf_token: uuid::Uuid) -> String {
     format!(
         "{}?response_type=code&client_id={}&redirect_uri={}&scope={}&state={}",
         *OAUTH_URI,
         *CLIENT_ID,
         *REDIRECT_URI,
         "organizer:view organizer:result",
-        "csrf_token"
+        csrf_token
     )
 }
 
