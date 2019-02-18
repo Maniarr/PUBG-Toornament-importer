@@ -1,3 +1,5 @@
+use super::super::service::toornament;
+
 use serde::Serialize;
 use rocket::{
     http::{ContentType, Status},
@@ -7,36 +9,127 @@ use rocket::{
 use std::io::Cursor;
 
 #[derive(Serialize)]
-pub struct CustomError {
+pub struct Message {
     pub message: String
 }
 
-#[derive(Serialize)]
-pub enum JsonResponse<T, E> where T: Serialize, E: Serialize {
-    Ok(u16, T),
-    Err(u16, E)
+impl From<String> for Message {
+    fn from(string: String) -> Self {
+        Message {
+            message: string
+        }
+    }
 }
 
-impl<'r, T: Serialize, E: Serialize> Responder<'r> for JsonResponse<T, E> {
-    fn respond_to(self, _: &Request) -> response::Result<'r> {
-        let (status_code, json) = match self {
-            JsonResponse::Ok(status, object) => (status, serde_json::to_string(&object).expect("error convert struct")),
-            JsonResponse::Err(status, object) => (status, serde_json::to_string(&object).expect("error convert struct"))
+impl<'s> From<&'s str> for Message {
+    fn from(string: &'s str) -> Self {
+        Message {
+            message: String::from(string)
+        }
+    }
+}
+
+pub struct JsonResponse<T> {
+    #[serde(skip_serializing)]
+    pub status: Status,
+    pub response: T
+}
+
+#[derive(Debug, Serialize)]
+pub struct CustomError {
+    #[serde(skip_serializing)]
+    pub status: Status,
+    pub code: String,
+    pub message: String
+}
+
+impl From<jsonwebtoken::errors::Error> for CustomError {
+    fn from(error: jsonwebtoken::errors::Error) -> Self {
+        CustomError {
+            status: Status::InternalServerError,
+            code: "jwt_error".to_string(),
+            message: "".to_string()
+        }
+    }
+}
+
+impl From<base64::DecodeError> for CustomError {
+    fn from(error: base64::DecodeError) -> Self {
+        CustomError {
+            status: Status::InternalServerError,
+            code: "internal_error".to_string(),
+            message: error.to_string()
+        }
+    }
+}
+
+impl From<std::option::NoneError> for CustomError {
+    fn from(error: std::option::NoneError) -> Self {
+        CustomError {
+            status: Status::Unauthorized,
+            code: "invalid_token".to_string(),
+            message: "".to_string()
+        }
+    }
+}
+
+impl From<serde_json::Error> for CustomError {
+    fn from(error: serde_json::Error) -> Self {
+        CustomError {
+            status: Status::InternalServerError,
+            code: "internal_error".to_string(),
+            message: error.to_string()
+        }
+    }
+}
+
+impl From<toornament::Error> for CustomError {
+    fn from(error: toornament::Error) -> Self {
+        CustomError {
+            status: Status::InternalServerError,
+            code: "toornament_error".to_string(),
+            message: error.message
+        }
+    }
+}
+
+impl From<reqwest::Error> for CustomError {
+    fn from(error: reqwest::Error) -> Self {
+        CustomError {
+            status: Status::InternalServerError,
+            code: "reqwest_error".to_string(),
+            message: "".to_string()
+        }
+    }
+}
+
+impl<'r> Responder<'r> for CustomError {
+    fn respond_to(self, _: &Request) -> Result<Response<'r>, Status> {
+        let json = match serde_json::to_string(&self) {
+            Ok(object) => object,
+            Err(_) => return Err(Status::InternalServerError)
         };
 
         Response::build()
-            .status(Status::from_code(status_code).expect("Response code doesn't exist"))
+            .status(self.status)
             .header(ContentType::JSON)
             .sized_body(Cursor::new(json))
             .ok()
     }
 }
 
-impl<'r> rocket::response::Responder<'r> for CustomError {
-    fn respond_to(self, _: &Request) -> response::Result<'r> {
+impl<'r, T: Serialize> Responder<'r> for JsonResponse<T> {
+    fn respond_to(self, _: &Request) -> Result<Response<'r>, Status> {
+        let json = match serde_json::to_string(&self.response) {
+            Ok(object) => object,
+            Err(_) => return Err(Status::InternalServerError)
+        };
+
         Response::build()
-            .header(ContentType::Plain)
-            .sized_body(Cursor::new(self.message))
+            .status(self.status)
+            .header(ContentType::JSON)
+            .sized_body(Cursor::new(json))
             .ok()
     }
 }
+

@@ -1,3 +1,5 @@
+use super::super::util::response::CustomError;
+
 use reqwest::Client;
 
 lazy_static!{
@@ -43,16 +45,6 @@ impl From<LoginRequest> for TokenRequest {
     }
 }
 
-impl From<reqwest::Error> for Error {
-    fn from(error: reqwest::Error) -> Self {
-        Error {
-            error: "".to_string(),
-            hint: "".to_string(),
-            message: error.to_string()
-        }
-    }
-}
-
 #[derive(Deserialize, Serialize, Debug)]
 pub struct TokenResponse {
     pub access_token: String,
@@ -62,18 +54,12 @@ pub struct TokenResponse {
     pub scope: String
 }
 
+
 #[derive(Deserialize, Serialize, Debug)]
 #[serde(untagged)]
 enum ToornamentResult<T> {
     Ok(T),
     Err(Error)
-}
-
-fn to_result<T>(result: ToornamentResult<T>) -> Result<T, Error> {
-    match result {
-        ToornamentResult::Ok(object) => Ok(object),
-        ToornamentResult::Err(error) => Err(error)
-    }
 }
 
 pub fn get_connection_uri(csrf_token: uuid::Uuid) -> String {
@@ -87,7 +73,7 @@ pub fn get_connection_uri(csrf_token: uuid::Uuid) -> String {
     )
 }
 
-pub fn get_tokens(client: &Client, login_request: &LoginRequest) -> Result<TokenResponse, Error> {
+pub fn get_tokens(client: &Client, login_request: &LoginRequest) -> Result<TokenResponse, CustomError> {
     let response = client.post(&format!("{}/{}", *API_URI, "oauth/v2/token"))
         .header("Content-Type", "application/x-www-form-urlencoded")
         .body(format!(
@@ -98,7 +84,10 @@ pub fn get_tokens(client: &Client, login_request: &LoginRequest) -> Result<Token
             login_request.code
         ))
         .send()?
-        .json::<ToornamentResult<TokenResponse>>()?;
+        .json::<Result<TokenResponse, Error>>()?;
 
-    to_result(response)
+    match response {
+        Ok(tokens) => Ok(tokens),
+        Err(error) => Err(CustomError::from(error))
+    }
 }

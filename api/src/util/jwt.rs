@@ -1,4 +1,7 @@
-use super::super::service::toornament;
+use super::super::{
+    service::toornament,
+    util::response::*
+};
 
 use jsonwebtoken::{encode, decode, Header, Validation};
 use rocket::{
@@ -43,47 +46,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Claims {
     }
 }
 
-impl From<jsonwebtoken::errors::Error> for toornament::Error {
-    fn from(error: jsonwebtoken::errors::Error) -> Self {
-        toornament::Error {
-            error: "JWT".to_string(),
-            hint: "".to_string(),
-            message: error.to_string()
-        }
-    }
-}
-
-impl From<base64::DecodeError> for toornament::Error {
-    fn from(error: base64::DecodeError) -> Self {
-        toornament::Error {
-            error: "JWT".to_string(),
-            hint: "".to_string(),
-            message: error.to_string()
-        }
-    }
-}
-
-impl From<std::option::NoneError> for toornament::Error {
-    fn from(error: std::option::NoneError) -> Self {
-        toornament::Error {
-            error: "JWT".to_string(),
-            hint: "".to_string(),
-            message: "invalid token".to_string()
-        }
-    }
-}
-
-impl From<serde_json::Error> for toornament::Error {
-    fn from(error: serde_json::Error) -> Self {
-        toornament::Error {
-            error: "JWT".to_string(),
-            hint: "".to_string(),
-            message: error.to_string()
-        }
-    }
-}
-
-pub fn generate_jwt(access_token: String) -> Result<String, toornament::Error> {
+pub fn generate_jwt(access_token: String) -> Result<String, CustomError> {
     let informations = access_token.split(".").nth(1)?;
 
     let mut claims: Claims = serde_json::from_slice(&base64::decode(informations)?)?;
@@ -92,11 +55,15 @@ pub fn generate_jwt(access_token: String) -> Result<String, toornament::Error> {
 
     match encode(&Header::default(), &claims, &*JWT_SECRET) {
         Ok(jwt) => Ok(jwt),
-        Err(error) => Err(toornament::Error::from(error))
+        Err(error) => Err(CustomError {
+            status: Status::Unauthorized,
+            code: "token_invalid".to_string(),
+            message: "".to_string()
+        })
     }
 }
 
-pub fn verify_jwt(jwt: String, toornament_token: String) -> Result<jsonwebtoken::TokenData<Claims>, toornament::Error> {
+pub fn verify_jwt(jwt: String, toornament_token: String) -> Result<jsonwebtoken::TokenData<Claims>, CustomError> {
     let validation = Validation { ..Validation::default() };
 
     let claims = decode::<Claims>(&jwt, &*JWT_SECRET, &validation)?;
@@ -104,9 +71,9 @@ pub fn verify_jwt(jwt: String, toornament_token: String) -> Result<jsonwebtoken:
     if claims.claims.sub == toornament_token {
         Ok(claims)
     } else {
-        Err(toornament::Error {
-            error: "".to_string(),
-            hint: "".to_string(),
+        Err(CustomError {
+            status: Status::Unauthorized,
+            code: "token_invalid".to_string(),
             message: "".to_string()
         })
     }

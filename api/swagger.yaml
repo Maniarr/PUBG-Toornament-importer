@@ -1,0 +1,86 @@
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "API"
+basePath: "/"
+tags:
+  - name: "authentication"
+schemes:
+  - "http"
+paths:
+  /login:
+    get:
+      tags:
+        - "authentication"
+      summary: "Get toornament url for login"
+      operationId: "get_login_url"
+      produces:
+          - "application/json"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            type: "object"
+            properties:
+              connection_uri:
+                type: "string"
+    post:
+      tags:
+        - "authentication"
+      summary: "Retrieve tokens to authenticate api calls"
+      operationId: "login"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              code:
+                type: "string"
+              state:
+                type: "string"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Token"
+        401:
+          description: "Incorrect tokens"
+          schema:
+            $ref: "#/definitions/Error"
+
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "x-api-key"
+    in: "header"
+
+definitions:
+  Error:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+      message:
+        type: "string"
+  Token:
+    type: "object"
+    properties:
+      authentication_token:
+        type: "string"
+      access_token:
+        type: "string"
+      expires_in:
+        type: "number"
+        format: "integer"
+      token_type:
+        type: "string"
+      refresh_token:
+        type: "string"
+      scope:
+        type: "string"
