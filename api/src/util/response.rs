@@ -4,7 +4,7 @@ use serde::Serialize;
 use rocket::{
     http::{ContentType, Status},
     request::Request,
-    response::{self, Response, Responder}
+    response::{Response, Responder}
 };
 use std::io::Cursor;
 

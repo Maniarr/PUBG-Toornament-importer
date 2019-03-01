@@ -74,7 +74,7 @@ pub fn get_connection_uri(csrf_token: uuid::Uuid) -> String {
 }
 
 pub fn get_tokens(client: &Client, login_request: &LoginRequest) -> Result<TokenResponse, CustomError> {
-    let response = client.post(&format!("{}/{}", *API_URI, "oauth/v2/token"))
+    let mut response = client.post(&format!("{}/{}", *API_URI, "oauth/v2/token"))
         .header("Content-Type", "application/x-www-form-urlencoded")
         .body(format!(
             "grant_type=authorization_code&client_id={}&client_secret={}&redirect_uri={}&code={}",
@@ -83,11 +83,14 @@ pub fn get_tokens(client: &Client, login_request: &LoginRequest) -> Result<Token
             *REDIRECT_URI,
             login_request.code
         ))
-        .send()?
-        .json::<Result<TokenResponse, Error>>()?;
+        .send()?;
 
-    match response {
+    match response.json::<TokenResponse>() {
         Ok(tokens) => Ok(tokens),
-        Err(error) => Err(CustomError::from(error))
+        Err(error) => {
+            eprintln!("{:?}", error);
+
+            Err(CustomError::from(error))
+        }
     }
 }

@@ -20,11 +20,6 @@ struct LoginLocation {
     connection_uri: String
 }
 
-#[options("/login")]
-fn options_login() -> String {
-    "".to_string()
-}
-
 #[get("/login")]
 fn get_login(mut cookies: Cookies) -> Result<JsonResponse<LoginLocation>, CustomError> {
     let csrf_token = uuid::Uuid::new_v4();
@@ -84,10 +79,18 @@ fn login(mut cookies: Cookies, json_login_request: Json<LoginRequest>) -> Result
                         scope: token.scope
                     }
                 }),
-                Err(error) => Err(error)
+                Err(error) => {
+                    eprintln!("generate token: {:?}", error);
+
+                    Err(error)
+                }
             }
         },
-        Err(error) => Err(error)
+        Err(error) => {
+            eprintln!("{:?}", error);
+
+            Err(error)
+        }
     }
 }
 
@@ -98,7 +101,6 @@ fn me(jwt: Claims) -> Json<Claims> {
 
 pub fn register_routes() -> Vec<Route> {
     routes![
-        options_login,
         get_login,
         login,
         me

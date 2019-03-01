@@ -54,5 +54,7 @@ fn main() {
 
     rocket::ignite()
         .mount("/", controller::auth::register_routes())
+        .mount("/pubg", controller::pubg::register_routes())
         .launch();
 }
+

@@ -3,8 +3,7 @@ info:
   version: "1.0.0"
   title: "API"
 basePath: "/"
-tags:
-  - name: "authentication"
+host: "localhost:8001"
 schemes:
   - "http"
 paths:
