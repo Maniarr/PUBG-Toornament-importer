@@ -20,7 +20,7 @@ class Api {
     login(code, state) {
         return new Promise((resolve, reject) => {
             this.http.post('login', { code: code, state: state}).then(response => {
-                this.token = response.body.access_token
+                this.token = response.body
                 this.is_connected = true
 
                 resolve()
@@ -34,7 +34,8 @@ class Api {
         return new Promise((resolve, reject) => {
             this.http.get('tournaments', {
                 headers: {
-                    'Authorization': 'Bearer ' + this.token
+                    'x-api-key': this.token.authentication_token,
+                    'x-toornament-api-key':  this.token.access_token
                 }
             }).then(response => {
                 resolve(response.body)
@@ -48,7 +49,8 @@ class Api {
         return new Promise((resolve, reject) => {
             this.http.get('tournaments/' + tournament_id + '/matches', {
                 headers: {
-                    'Authorization': 'Bearer ' + this.token
+                    'x-api-key': this.token.authentication_token,
+                    'x-toornament-api-key':  this.token.access_token
                 }
             }).then(response => {
                 resolve(response.body)
@@ -62,7 +64,8 @@ class Api {
         return new Promise((resolve, reject) => {
             this.http.get('tournaments/' + tournament_id + '/matches/' + match_id, {
                 headers: {
-                    'Authorization': 'Bearer ' + this.token
+                    'x-api-key': this.token.authentication_token,
+                    'x-toornament-api-key':  this.token.access_token
                 }
             }).then(response => {
                 resolve(response.body)
@@ -76,7 +79,8 @@ class Api {
         return new Promise((resolve, reject) => {
             this.http.get('pubg/tournaments', {
                 headers: {
-                    'Authorization': 'Bearer ' + this.token
+                    'x-api-key': this.token.authentication_token,
+                    'x-toornament-api-key':  this.token.access_token
                 }
             }).then(response => {
                 resolve(response.body.data)
@@ -90,7 +94,8 @@ class Api {
         return new Promise((resolve, reject) => {
             this.http.get('pubg/tournaments/' + tournament_id, {
                 headers: {
-                    'Authorization': 'Bearer ' + this.token
+                    'x-api-key': this.token.authentication_token,
+                    'x-toornament-api-key':  this.token.access_token
                 }
             }).then(response => {
                 resolve(response.body.included)
@@ -104,7 +109,8 @@ class Api {
         return new Promise((resolve, reject) => {
             this.http.get('pubg/players', {
                 headers: {
-                    'Authorization': 'Bearer ' + this.token
+                    'x-api-key': this.token.authentication_token,
+                    'x-toornament-api-key':  this.token.access_token
                 },
                 params: {
                     platform: platform,
@@ -125,7 +131,8 @@ class Api {
         return new Promise((resolve, reject) => {
             this.http.get('pubg/matches/' + platform + '/' + match_id, {
                 headers: {
-                    'Authorization': 'Bearer ' + this.token
+                    'x-api-key': this.token.authentication_token,
+                    'x-toornament-api-key':  this.token.access_token
                 }
             }).then(response => {
                 let match_info = response.data.data
@@ -148,7 +155,8 @@ class Api {
         return new Promise((resolve, reject) => {
             this.http.get('preview', {
                 headers: {
-                    'Authorization': 'Bearer ' + this.token
+                    'x-api-key': this.token.authentication_token,
+                    'x-toornament-api-key':  this.token.access_token
                 },
                 params: {
                     toornament_tournament_id: toornament_tournament_id,
@@ -174,7 +182,8 @@ class Api {
                 pubg_match_id: pubg_match_id
             }, {
                 headers: {
-                        'Authorization': 'Bearer ' + this.token
+                    'x-api-key': this.token.authentication_token,
+                    'x-toornament-api-key':  this.token.access_token
                 }
             }).then(response => {
                resolve(response)

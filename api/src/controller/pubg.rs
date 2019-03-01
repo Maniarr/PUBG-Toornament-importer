@@ -10,7 +10,7 @@ use rocket::{
 use rocket_contrib::json::Json;
 
 #[get("/tournaments")]
-pub fn get_tournaments(_jwt: Claims) -> Result<JsonResponse<Vec<pubg::Tournament>>, CustomError> {
+pub fn get_tournaments(_jwt: Claims) -> Result<JsonResponse<pubg::PubgResponse<Vec<pubg::Tournament>>>, CustomError> {
     let client = reqwest::Client::new();
 
     let tournaments = pubg::get_tournaments(&client)?;
@@ -22,7 +22,7 @@ pub fn get_tournaments(_jwt: Claims) -> Result<JsonResponse<Vec<pubg::Tournament
 }
 
 #[get("/tournaments/<tournament_id>")]
-pub fn get_tournament(_jwt: Claims, tournament_id: String) -> Result<JsonResponse<pubg::TournamentInfo>, CustomError> {
+pub fn get_tournament(_jwt: Claims, tournament_id: String) -> Result<JsonResponse<pubg::PubgResponse<pubg::TournamentInfo>>, CustomError> {
     let client = reqwest::Client::new();
 
     Ok(JsonResponse {

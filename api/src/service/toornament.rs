@@ -88,7 +88,7 @@ pub fn get_tokens(client: &Client, login_request: &LoginRequest) -> Result<Token
     match response.json::<TokenResponse>() {
         Ok(tokens) => Ok(tokens),
         Err(error) => {
-            eprintln!("{:?}", error);
+            eprintln!("serde: {:?}", error);
 
             Err(CustomError::from(error))
         }

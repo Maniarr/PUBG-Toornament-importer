@@ -33,10 +33,10 @@ fn get_pubg(client: &Client, url: String) -> Result<reqwest::Response, CustomErr
         .send()?)
 }
 
-pub fn get_tournaments(client: &Client) -> Result<Vec<Tournament>, CustomError> {
+pub fn get_tournaments(client: &Client) -> Result<PubgResponse<Vec<Tournament>>, CustomError> {
     let mut response = get_pubg(client, "/tournaments".to_string())?;
 
-    Ok(response.json::<PubgResponse<Vec<Tournament>>>()?.data)
+    Ok(response.json::<PubgResponse<Vec<Tournament>>>()?)
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -60,12 +60,12 @@ pub struct TournamentInfo {
     pub relationships: Relationship,
 }
 
-pub fn get_tournament(client: &Client, tournament_id: String) -> Result<TournamentInfo, CustomError> {
+pub fn get_tournament(client: &Client, tournament_id: String) -> Result<PubgResponse<TournamentInfo>, CustomError> {
     let mut response = get_pubg(client, format!("/tournaments/{}", tournament_id))?;
 
     let test = response.text()?.clone();
 
-    Ok(serde_json::from_str::<PubgResponse<TournamentInfo>>(&test)?.data)
+    Ok(serde_json::from_str::<PubgResponse<TournamentInfo>>(&test)?)
 }
 
 #[derive(Deserialize, Serialize, Debug)]
