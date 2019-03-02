@@ -1,6 +1,11 @@
 use super::super::util::response::CustomError;
 
-use reqwest::Client;
+use reqwest::{
+    Client,
+    header::{HeaderMap, HeaderName, HeaderValue}
+};
+
+use std::str::FromStr;
 
 lazy_static!{
     pub static ref OAUTH_URI: String = std::env::var("TOORNAMENT_OAUTH_URI").unwrap().to_string();
@@ -94,3 +99,91 @@ pub fn get_tokens(client: &Client, login_request: &LoginRequest) -> Result<Token
         }
     }
 }
+
+fn get_toornament<'a>(client: &Client, url: String, range: Option<&'a str>, api_key: String) -> Result<reqwest::Response, CustomError> {
+    let mut headers = HeaderMap::new();
+
+    headers.insert(HeaderName::from_str("Authorization")?, HeaderValue::from_str(&format!("Bearer {}", api_key))?); 
+    headers.insert(HeaderName::from_str("X-Api-Key")?, HeaderValue::from_str(&format!("{}", *API_KEY))?);
+    headers.insert(HeaderName::from_str("Accept")?, HeaderValue::from_str("application/json")?);
+
+    if range.is_some() {
+        headers.insert(HeaderName::from_str("Range")?, HeaderValue::from_str(range.unwrap())?);
+    }
+    
+    Ok(client.get(&format!("https://api.toornament.com/organizer/v2{}", url))
+        .headers(headers)
+        .send()?
+    )
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Tournament {
+    pub id: String,
+    pub name: String,
+    pub full_name: Option<String>
+}
+
+pub fn get_tournaments(client: &Client, api_key: String) -> Result<Vec<Tournament>, CustomError> {
+    let mut response = get_toornament(client, format!("/tournaments?disciplines=player_unknowns_battlegrounds"), Some("tournaments=0-49"), api_key)?;
+    Ok(response.json::<Vec<Tournament>>()?)
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ParticipantField {
+    pub team_id: String
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Participant {
+    pub id: String,
+    pub name: String,
+    pub custom_fields: ParticipantField
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Opponent {
+    pub number: i64,
+    pub participant: Participant
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Match {
+    pub id: String,
+    pub number: i64,
+    pub opponents: Vec<Opponent>
+}
+
+pub fn get_matches(client: &Client, api_key: String, tournament_id: String) -> Result<Vec<Match>, CustomError> {
+    let mut response = get_toornament(client, format!("/tournaments/{}/matches", tournament_id), Some("matches=0-49"), api_key)?;
+
+    Ok(response.json()?)
+}
+
+pub fn get_match(client: &Client, api_key: String, tournament_id: String, match_id: String) -> Result<Match, CustomError> {    
+    let mut response = get_toornament(client, format!("/tournaments/{}/matches/{}", tournament_id, match_id), None, api_key)?;
+
+    Ok(response.json()?) 
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GameOpponent {
+    pub number: i64,
+    pub position: i64,
+    pub rank: Option<i64>,
+    pub score: Option<i64>
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Game {
+    pub number: i64,
+    pub status: String,
+    pub opponents: Vec<GameOpponent>
+}
+
+pub fn get_games(client: &Client, api_key: String, tournament_id: String, match_id: String) -> Result<Vec<Game>, CustomError> {    
+    let mut response = get_toornament(client, format!("/tournaments/{}/matches/{}/games", tournament_id, match_id), Some("games=0-49"), api_key)?;
+
+    Ok(response.json()?) 
+}
+

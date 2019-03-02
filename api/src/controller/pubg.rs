@@ -1,6 +1,6 @@
 use super::super::{
     util::{jwt::*, response::*},
-    service::pubg::{self},
+    service::pubg,
 };
 
 use rocket::{

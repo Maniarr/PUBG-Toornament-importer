@@ -103,6 +103,26 @@ impl From<reqwest::Error> for CustomError {
     }
 }
 
+impl From<reqwest::header::InvalidHeaderValue> for CustomError {
+    fn from(error: reqwest::header::InvalidHeaderValue) -> Self {
+        CustomError {
+            status: Status::InternalServerError,
+            code: "reqwest_error".to_string(),
+            message: "".to_string()
+        }
+    }
+}
+
+impl From<reqwest::header::InvalidHeaderName> for CustomError {
+    fn from(error: reqwest::header::InvalidHeaderName) -> Self {
+        CustomError {
+            status: Status::InternalServerError,
+            code: "reqwest_error".to_string(),
+            message: "".to_string()
+        }
+    }
+}
+
 impl<'r> Responder<'r> for CustomError {
     fn respond_to(self, _: &Request) -> Result<Response<'r>, Status> {
         let json = match serde_json::to_string(&self) {
