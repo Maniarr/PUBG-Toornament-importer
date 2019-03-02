@@ -1,63 +1,50 @@
 <template>
     <div>
-        <nav class="navbar navbar-light bg-light justify-content-between">
-            <a class="navbar-brand" href="#">PUBG importer</a>
-            <button class="btn btn-danger" @click="logout">Logout</button>
-        </nav>
-
-        <div class="container mt-4">
-            <div class="row">
-                <div v-if="tournament_id == null" class="col">
-                    <h4>Choose Toornament tournament:</h4>
-
-                    <div class="container pt-3 pb-3">
-                        <div class="card-columns">
-                            <div v-for="tournament in tournaments" v-bind:key="tournament.id" @click="setTournament(tournament.id)" class="card" style="cursor: pointer">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ tournament.name }}</h5>
-                                </div>
-                            </div>
-                        </div>
+        <div class="row pt-4">
+            <div class="col col-2">
+                <div>
+                    <h5>Choosen Toornament info:</h5>
+                    <div>
+                        <p><b>Tournament:</b></p>
+                        <p>{{ toornament.tournament != null ? toornament.tournament.name : "N/A" }}</p>
+                    </div>
+                    <div>
+                        <p><b>Game:</b></p>
+                        <p>{{ toornament.game != null ? "#" + toornament.game : "N/A" }}</p>
                     </div>
                 </div>
-                <div v-if="tournament_id != null && game == null" class="col">
-                    <h4>Choose Toornament game:</h4>
-
-                    <div class="container pt-3 pb-3">
-                        <div class="card-columns">
-                            <div v-for="game in games" v-bind:key="game.number" @click="setGame(game.number)" class="card" style="cursor: pointer">
-                                <div class="card-body">
-                                    <h5 class="card-title">Game #{{ game.number }}</h5>
-                                </div>
-                            </div>
-                        </div>
+                <div>
+                    <h5>Choosen PUBG info:</h5>
+                    <div>
+                        <p><b>Tournament:</b></p>
+                        <p>{{ pubg.tournament != null ? pubg.tournament.id : "N/A" }}</p>
+                    </div>
+                    <div>
+                        <p><b>Match:</b></p>
+                        <p>{{ pubg.match != null ? pubg.match.map_name : "N/A" }}</p>
                     </div>
                 </div>
-                <div v-if="tournament_id != null && game != null && pubg_tournament_id == null" class="col">
-                    <h4>Choose PUBG tournament:</h4>
-
-                    <div class="container pt-3 pb-3">
-                        <div class="card-columns">
-                            <div v-for="tournament in pubg_tournaments" v-bind:key="tournament.id" @click="setPUBGTournament(tournament.id)" class="card"
-                                style="cursor: pointer">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ tournament.id }}</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div v-if="tournament_id != null && game != null && pubg_tournament_id != null && pubg_match_id == null" class="col">
-                    <h4>Choose PUBG match:</h4>
-
-                    <div class="container pt-3 pb-3">
-                        <div v-for="match in pubg_matches" v-bind:key="match.id" @click="setPUBGMatch(match.id)" class="card mb-2" style="cursor: pointer; width: 100%">
-                            <div class="card-body">
-                                <h5 class="card-title">Played at {{ match.attributes.createdAt }} - {{ match.id }}</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            </div>
+            <div class="col col-10">
+                <ToornamentChooser 
+                    v-if="!is_toornament_ready()"
+                    ref="toornament"
+                    v-on:update_toornament="update_toornament"
+                >
+                </ToornamentChooser> 
+                <PUBGChooser
+                    v-if="is_toornament_ready() && !is_preview_ready()"
+                    v-on:update_pubg_tournament="update_pubg_tournament"
+                    v-on:update_pubg_match="update_pubg_match"
+                >
+                </PUBGChooser>
+                <ChooserPreview
+                    v-if="is_preview_ready()"
+                    :toornament="toornament"
+                    :pubg="pubg"
+                    v-on:cancel_preview="cancel"
+                >
+                </ChooserPreview>
             </div>
         </div>
     </div>
@@ -65,124 +52,57 @@
 
 <script>
     import Config from '../config'
+    import ToornamentChooser from './ToornamentChooser.vue'
+    import PUBGChooser from './PUBGChooser.vue'
+    import ChooserPreview from './ChooserPreview.vue'
 
     export default {
         name: 'Tournament',
-        props: {
-            accesstoken: String
+        components: {
+            ToornamentChooser,
+            PUBGChooser,
+            ChooserPreview
         },
         data: function () {
             return {
-                tournament_id: null,
-                match_id: null,
-                game: null,
-                pubg_tournament_id: null,
-                pubg_match_id: null,
-                tournaments: [],
-                matches: [],
-                games: [],
-                pubg_tournaments: [],
-                pubg_matches: []
+                toornament: {
+                    tournament: null,
+                    game: null
+                },
+                pubg: {
+                    tournament: null,
+                    match: null
+                }
             }
         },
         methods: {
-            logout: function () {
-                window.location = '/'
+            update_toornament(toornament) {
+                this.$data.toornament = toornament
             },
-            getTournaments: function () {
-                this.$http.get(Config.API_URL + '/tournaments', {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.accesstoken
-                    }
-                }).then(response => {
-                    this.$data.tournaments = response.body
-                })
+            update_pubg: function (pubg) {
+                this.$data.pubg = pubg
             },
-            getMatches: function (tournament_id) {
-                return this.$http.get(Config.API_URL + '/tournaments/' + tournament_id + '/matches', {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.accesstoken
-                    }
-                }).then(response => {
-                    return this.$data.matches = response.body
-                })
+            update_pubg_tournament(tournament) {
+                this.$data.pubg.tournament = tournament
             },
-            getGames: function (tournament_id, match_id) {
-                this.$http.get(Config.API_URL + '/tournaments/' + tournament_id + '/matches/' + match_id, {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.accesstoken
-                    }
-                }).then(response => {
-                    this.$data.games = response.body
-                })
+            update_pubg_match(match) {
+                this.$data.pubg.match = match
             },
-            setTournament: function (tournament_id) {
-                this.getMatches(tournament_id).then(matches => {
-                    this.$data.tournament_id = tournament_id
+            is_toornament_ready() {
+                if (this.$data.toornament == null)
+                    return false
 
-                    this.$data.match_id = this.$data.matches[0].id
-                    this.getGames(tournament_id, this.$data.match_id)
-                });
+                return this.$data.toornament.game != null
             },
-            setGame: function (game) {
-                this.$data.game = game
-                this.getPUBGTournaments()
-            },
-            getPUBGTournaments: function () {
-                this.$http.get(Config.API_URL + '/pubg/tournaments', {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.accesstoken
-                    }
-                }).then(response => {
-                    this.$data.pubg_tournaments = response.body.data
-                })
-            },
-            getPUBGMatches: function (tournament_id) {
-                this.$http.get(Config.API_URL + '/pubg/tournaments/' + tournament_id, {
-                    headers: {
-                        'Authorization': 'Bearer ' + this.accesstoken
-                    }
-                }).then(response => {
-                    this.$data.pubg_matches = response.body.included.sort((a, b) => {
-                        return a.attributes.createdAt < b.attributes.createdAt ? 1 : -1
-                    })
-                })
-            },
-            setPUBGTournament: function (tournament_id) {
-                this.$data.pubg_tournament_id = tournament_id
-                this.getPUBGMatches(tournament_id)
-            },
-            setPUBGMatch: function (match_id) {
-                this.$data.pubg_match_id = match_id
+            is_preview_ready() {
+                if (this.$data.pubg == null)
+                    return false
 
-                this.$http.post(Config.API_URL + '/import', {
-                    toornament_tournament_id: this.$data.tournament_id,
-                    toornament_match_id: this.$data.match_id,
-                    toornament_game: this.$data.game,
-                    pubg_match_id: this.$data.pubg_match_id,
-                },
-                    {
-                        headers: {
-                            'Authorization': 'Bearer ' + this.accesstoken
-                        }
-                    }).then(() => {
-                        this.$data.tournament_id = null
-                        this.$data.match_id = null
-                        this.$data.game = null
-                        this.$data.pubg_tournament_id = null
-                        this.$data.pubg_match_id = null
-                        this.$data.tournaments = []
-                        this.$data.matches = []
-                        this.$data.games = []
-                        this.$data.pubg_tournaments = []
-                        this.$data.pubg_matches = []
-
-                        this.getTournaments()
-                    })
+                return this.is_toornament_ready() && this.$data.pubg.match != null
             },
-        },
-        mounted: function () {
-            this.getTournaments()
+            cancel() {
+                Object.assign(this.$data, this.$options.data.call(this));
+            }
         }
     }
 </script>

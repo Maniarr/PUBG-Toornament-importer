@@ -1,44 +1,62 @@
 <template>
-  <div id="app">
-    <Login v-if="link != null" :link="link" />
-    <Tournament v-if="accesstoken != null" :accesstoken="accesstoken" />
+  <div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
+      <a class="navbar-brand" href="#">PUBG importer</a>
+      <button v-if="is_connected" class="btn btn-danger" @click="logout">Logout</button>
+    </nav>
+
+    <div v-if="!is_connected">
+      <table style="height: 80vh; width: 100%" class="text-center">
+        <tbody>
+          <tr>
+            <td class="align-middle" v-if="link != null">
+              <a class="btn btn-primary" v-bind:href="link">Login with Toornament</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <Tournament v-else/>
   </div>
 </template>
 
 <script>
-  import Login from './components/Login.vue'
   import Tournament from './components/Tournament.vue'
   import Config from './config'
 
   export default {
     name: 'app',
     components: {
-      Login,
       Tournament
     },
-    data: function () {
+    data() {
       return {
         link: null,
-        accesstoken: null
+        is_connected: false
       }
     },
-    mounted: function () {
+    methods: {
+      logout() {
+        window.location = '/'
+      }
+    },
+    mounted() {
       let url = new URL(window.location);
 
       let code = url.searchParams.get("code");
       let state = url.searchParams.get("state");
 
       if (code === null || state === null) {
-        this.$http.get(Config.API_URL + '/login').then(response => {
+        this.$api.get_login_url().then(response => {
           this.$data.link = response.body.connection_uri
         })
 
         return;
       }
 
-      this.$http.post(Config.API_URL + '/login', { code: code, state: state }).then(response => {
-        this.$data.accesstoken = response.body.access_token
-      }, error => {
+      this.$api.login(code, state).then(() => {
+        this.is_connected = true
+      }).catch(error => {
         window.location = "/"
       })
     }

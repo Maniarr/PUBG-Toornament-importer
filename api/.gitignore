@@ -1,3 +1,4 @@
-Makefile
-src/__pycache__
-fixtures
+.idea
+/target
+**/*.rs.bk
+.env
