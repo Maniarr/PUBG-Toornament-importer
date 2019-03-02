@@ -68,7 +68,7 @@ pub fn verify_jwt(jwt: String, toornament_token: String) -> Result<jsonwebtoken:
 
     let claims = decode::<Claims>(&jwt, &*JWT_SECRET, &validation)?;
 
-    if claims.claims.sub == toornament_token {
+    if claims.claims.sub == toornament_token && claims.claims.exp > Utc::now().timestamp() as usize {
         Ok(claims)
     } else {
         Err(CustomError {

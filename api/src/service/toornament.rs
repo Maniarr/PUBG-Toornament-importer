@@ -1,4 +1,5 @@
 use super::super::util::response::CustomError;
+use super::importer;
 
 use reqwest::{
     Client,
@@ -187,3 +188,19 @@ pub fn get_games(client: &Client, api_key: String, tournament_id: String, match_
     Ok(response.json()?) 
 }
 
+pub fn patch_game(client: &Client, api_key: String, tournament_id: String, match_id: String, game_number:i64, game: importer::Game) -> Result<String, CustomError> {
+    let mut headers = HeaderMap::new();
+
+    headers.insert(HeaderName::from_str("Authorization")?, HeaderValue::from_str(&format!("Bearer {}", api_key))?); 
+    headers.insert(HeaderName::from_str("X-Api-Key")?, HeaderValue::from_str(&format!("{}", *API_KEY))?);
+    headers.insert(HeaderName::from_str("Accept")?, HeaderValue::from_str("application/json")?);
+    
+    let mut response = client.patch(&format!("https://api.toornament.com/organizer/v2/tournaments/{}/matches/{}/games/{}", tournament_id, match_id, game_number))
+        .headers(headers)
+        .json(&game)
+        .send()?;
+
+    println!("{:#?}", response);
+
+    Ok("test".to_string())
+}
