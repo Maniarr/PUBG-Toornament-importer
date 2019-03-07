@@ -3,8 +3,10 @@ use super::importer;
 
 use reqwest::{
     Client,
-    header::{HeaderMap, HeaderName, HeaderValue}
+    header::{HeaderMap, HeaderName, HeaderValue},
+    StatusCode
 };
+use rocket::http::Status;
 
 use std::str::FromStr;
 
@@ -68,6 +70,17 @@ enum ToornamentResult<T> {
     Err(Error)
 }
 
+fn unwrap_response<T>(response: ToornamentResult<T>, status: u16) -> Result<T, CustomError> {
+    match response {
+        ToornamentResult::Ok(objects) => Ok(objects),
+        ToornamentResult::Err(error) => Err(CustomError {
+            status: Status::from_code(status).unwrap_or_else(|| Status::InternalServerError),
+            code: error.error,
+            message: error.message
+        })
+    }
+}
+
 pub fn get_connection_uri(csrf_token: uuid::Uuid) -> String {
     format!(
         "{}?response_type=code&client_id={}&redirect_uri={}&scope={}&state={}",
@@ -91,8 +104,8 @@ pub fn get_tokens(client: &Client, login_request: &LoginRequest) -> Result<Token
         ))
         .send()?;
 
-    match response.json::<TokenResponse>() {
-        Ok(tokens) => Ok(tokens),
+    match response.json::<ToornamentResult<TokenResponse>>() {
+        Ok(tokens) => unwrap_response(tokens, response.status().as_u16()),
         Err(error) => {
             eprintln!("serde: {:?}", error);
 
@@ -127,7 +140,8 @@ pub struct Tournament {
 
 pub fn get_tournaments(client: &Client, api_key: String) -> Result<Vec<Tournament>, CustomError> {
     let mut response = get_toornament(client, format!("/tournaments?disciplines=player_unknowns_battlegrounds"), Some("tournaments=0-49"), api_key)?;
-    Ok(response.json::<Vec<Tournament>>()?)
+    
+    unwrap_response(response.json()?, response.status().as_u16())
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -158,13 +172,13 @@ pub struct Match {
 pub fn get_matches(client: &Client, api_key: String, tournament_id: String) -> Result<Vec<Match>, CustomError> {
     let mut response = get_toornament(client, format!("/tournaments/{}/matches", tournament_id), Some("matches=0-49"), api_key)?;
 
-    Ok(response.json()?)
+    unwrap_response(response.json()?, response.status().as_u16())
 }
 
 pub fn get_match(client: &Client, api_key: String, tournament_id: String, match_id: String) -> Result<Match, CustomError> {    
     let mut response = get_toornament(client, format!("/tournaments/{}/matches/{}", tournament_id, match_id), None, api_key)?;
 
-    Ok(response.json()?) 
+    unwrap_response(response.json()?, response.status().as_u16()) 
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -185,10 +199,10 @@ pub struct Game {
 pub fn get_games(client: &Client, api_key: String, tournament_id: String, match_id: String) -> Result<Vec<Game>, CustomError> {    
     let mut response = get_toornament(client, format!("/tournaments/{}/matches/{}/games", tournament_id, match_id), Some("games=0-49"), api_key)?;
 
-    Ok(response.json()?) 
+    unwrap_response(response.json()?, response.status().as_u16()) 
 }
 
-pub fn patch_game(client: &Client, api_key: String, tournament_id: String, match_id: String, game_number:i64, game: importer::Game) -> Result<String, CustomError> {
+pub fn patch_game(client: &Client, api_key: String, tournament_id: String, match_id: String, game_number:i64, game: importer::Game) -> Result<Game, CustomError> {
     let mut headers = HeaderMap::new();
 
     headers.insert(HeaderName::from_str("Authorization")?, HeaderValue::from_str(&format!("Bearer {}", api_key))?); 
@@ -200,7 +214,6 @@ pub fn patch_game(client: &Client, api_key: String, tournament_id: String, match
         .json(&game)
         .send()?;
 
-    println!("{:#?}", response);
-
-    Ok("test".to_string())
+    unwrap_response(response.json()?, response.status().as_u16())
 }
+

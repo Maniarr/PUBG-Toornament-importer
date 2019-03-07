@@ -53,15 +53,15 @@ fn login(mut cookies: Cookies, json_login_request: Json<LoginRequest>) -> Result
         if cookie.value() != login_request.state {
             return Err(CustomError {
                 status: Status::Unauthorized,
-                code: "".to_string(),
-                message: "".to_string()
+                code: "invalid_cookie".to_string(),
+                message: "Please clear your cache.".to_string()
             });
         }
     } else {
         return Err(CustomError {
             status: Status::Unauthorized,
-            code: "".to_string(),
-            message: "".to_string()
+            code: "invalid_csrf".to_string(),
+            message: "Please clear your cache.".to_string()
         });
     }
 
