@@ -25,7 +25,7 @@ class Api {
 
                 resolve()
             }).catch(error => {
-                reject(error)
+                reject(error.body)
             })
         })
     }

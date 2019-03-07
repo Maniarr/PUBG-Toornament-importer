@@ -9,6 +9,13 @@
       <table style="height: 80vh; width: 100%" class="text-center">
         <tbody>
           <tr>
+            <td v-if="error != null" >
+              <div class="alert alert-danger" role="alert">
+                {{ error.message }}
+              </div>
+            </td>
+          </tr>
+          <tr>
             <td class="align-middle" v-if="link != null">
               <a class="btn btn-primary" v-bind:href="link">Login with Toornament</a>
             </td>
@@ -32,7 +39,8 @@
     data() {
       return {
         link: null,
-        is_connected: false
+        is_connected: false,
+        error: null
       }
     },
     methods: {
@@ -57,7 +65,9 @@
       this.$api.login(code, state).then(() => {
         this.is_connected = true
       }).catch(error => {
-        window.location = "/"
+        window.location = '/'
+        
+        this.$data.error = error
       })
     }
   }

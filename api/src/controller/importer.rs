@@ -33,7 +33,7 @@ pub struct ImportRequest {
 }
 
 #[post("/import", data = "<import_request_json>")]
-pub fn post_import(jwt: Claims, import_request_json: Json<ImportRequest>) -> Result<JsonResponse<String>, CustomError> {
+pub fn post_import(jwt: Claims, import_request_json: Json<ImportRequest>) -> Result<JsonResponse<toornament::Game>, CustomError> {
     let import_request = import_request_json.into_inner();
     let client = reqwest::Client::new();
 
