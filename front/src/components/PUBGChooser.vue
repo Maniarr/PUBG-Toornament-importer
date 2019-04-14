@@ -152,6 +152,7 @@
             },
             get_matches_by_player(player) {
                 this.$data.matches = player.relationships.matches.data
+                this.$data.matches.length = 20
             },
             update_match(match_id) {
                 this.$api.pubg_get_match(this.$data.selected_platform, match_id).then((match) => {
