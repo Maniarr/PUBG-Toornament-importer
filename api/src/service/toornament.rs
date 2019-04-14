@@ -159,7 +159,7 @@ pub struct Participant {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Opponent {
     pub number: i64,
-    pub participant: Participant
+    pub participant: Option<Participant>
 }
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -22,13 +22,15 @@ fn get_opponents_conversion(toornament_match: &toornament::Match) -> HashMap<Str
     let mut conversions = HashMap::new();
 
     for opponent in &toornament_match.opponents {
-        conversions.insert(
-            opponent.participant.custom_fields.team_id.clone(),
-            ConversionTeam {
-                name: opponent.participant.name.clone(),
-                number: opponent.number.clone()
-            }
-        );
+        if let Some(participant) = &opponent.participant {
+            conversions.insert(
+                participant.custom_fields.team_id.clone(),
+                ConversionTeam {
+                    name: participant.name.clone(),
+                    number: opponent.number.clone()
+                }
+            );
+        }
     }
 
     conversions
