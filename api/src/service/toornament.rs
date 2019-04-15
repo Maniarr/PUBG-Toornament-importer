@@ -146,7 +146,7 @@ pub fn get_tournaments(client: &Client, api_key: String) -> Result<Vec<Tournamen
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ParticipantField {
-    pub team_id: String
+    pub team_id: Option<String>
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -178,7 +178,7 @@ pub fn get_matches(client: &Client, api_key: String, tournament_id: String) -> R
 pub fn get_match(client: &Client, api_key: String, tournament_id: String, match_id: String) -> Result<Match, CustomError> {    
     let mut response = get_toornament(client, format!("/tournaments/{}/matches/{}", tournament_id, match_id), None, api_key)?;
 
-    unwrap_response(response.json()?, response.status().as_u16()) 
+    unwrap_response(response.json()?, response.status().as_u16())
 }
 
 #[derive(Debug, Serialize, Deserialize)]
