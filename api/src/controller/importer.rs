@@ -13,13 +13,13 @@ use rocket_contrib::json::Json;
 pub fn get_preview(jwt: Claims, toornament_tournament_id: String, toornament_match_id: String, pubg_match_id: String, pubg_platform: String) -> Result<JsonResponse<importer::Preview>, CustomError> {
     let client = reqwest::Client::new();
 
-    let toornament_match = toornament::get_match(&client, jwt.sub, toornament_tournament_id, toornament_match_id)?;
+    let toornament_match = toornament::get_match(&client, jwt.sub, toornament_tournament_id, toornament_match_id);
 
     let pubg_match = pubg::get_match(&client, pubg_platform, pubg_match_id)?; 
 
     Ok(JsonResponse {
         status: Status::Ok,
-        response: importer::get_preview(toornament_match, pubg_match)
+        response: importer::get_preview(toornament_match.unwrap(), pubg_match)
     })
 }
 

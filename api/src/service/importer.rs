@@ -68,8 +68,8 @@ fn get_teams(pubg_match: &pubg::MatchResponse) -> Vec<Team> {
 
 #[derive(Serialize, Debug)]
 pub struct PreviewProperty {
-    pub ingame_rank: i64,
-    pub kills: i64
+    pub ingame_rank: Option<i64>,
+    pub kills: Option<i64>
 }
 
 #[derive(Serialize, Debug)]
@@ -93,8 +93,8 @@ pub fn get_preview(toornament_match: toornament::Match, pubg_match: pubg::MatchR
             preview_teams.push(PreviewTeam {
                 team: conversion.clone(),
                 properties: PreviewProperty {
-                    ingame_rank: team.rank,
-                    kills: team.kills
+                    ingame_rank: Some(team.rank),
+                    kills: Some(team.kills)
                 }
             }); 
         }
@@ -127,10 +127,32 @@ pub fn transform_teams_to_game(toornament_match: toornament::Match, pubg_match: 
             opponents.push(GameOpponent {
                 number: conversion.number.clone(),
                 properties: PreviewProperty {
-                    ingame_rank: team.rank,
-                    kills: team.kills
+                    ingame_rank: Some(team.rank),
+                    kills: Some(team.kills)
                 }
             }); 
+        }
+    }
+
+    for team in toornament_match.opponents {
+        let mut finded = false;
+
+        for opponent in &opponents {
+            if opponent.number == team.number {
+                finded = true;
+
+                break;
+            }
+        }
+
+        if finded == false {
+            opponents.push(GameOpponent {
+                number: team.number.clone(),
+                properties: PreviewProperty {
+                    ingame_rank: None,
+                    kills: None
+                }
+            });
         }
     }
 
